@@ -1,0 +1,14 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+
+metadata:
+  name: pod-delete-chaos
+
+spec:
+  appinfo:
+    appns: default
+    applabel: "app=ha-dr-app"
+    appkind: deployment
+
+  experiments:
+    - name: pod-delete

@@ -1,0 +1,35 @@
+apiVersion: litmuschaos.io/v1alpha1
+kind: ChaosEngine
+
+metadata:
+  name: network-latency-chaos
+  namespace: litmus
+
+spec:
+  appinfo:
+    appns: default
+    applabel: "app=ha-dr-app"
+    appkind: deployment
+
+  chaosServiceAccount: litmus-admin
+
+  experiments:
+    - name: pod-network-latency
+
+      spec:
+        components:
+          env:
+            - name: NETWORK_INTERFACE
+              value: "eth0"
+
+            - name: NETWORK_LATENCY
+              value: "2000"
+
+            - name: TOTAL_CHAOS_DURATION
+              value: "60"
+
+            - name: RAMP_TIME
+              value: "10"
+
+            - name: JITTER
+              value: "100"

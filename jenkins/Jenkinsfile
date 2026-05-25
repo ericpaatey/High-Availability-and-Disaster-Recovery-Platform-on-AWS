@@ -1,0 +1,54 @@
+pipeline {
+
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Terraform Apply') {
+            steps {
+                dir('terraform/environments/prod') {
+                    sh 'terraform init'
+                    sh 'terraform apply -auto-approve'
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                sh '''
+                docker build -t ha-dr-app .
+                '''
+            }
+        }
+
+        stage('Push Image') {
+            steps {
+                sh '''
+                docker push your-ecr-repo/ha-dr-app
+                '''
+            }
+        }
+
+        stage('Deploy Kubernetes') {
+            steps {
+                sh '''
+                kubectl apply -f kubernetes/
+                '''
+            }
+        }
+
+        stage('Chaos Testing') {
+            steps {
+                sh '''
+                kubectl apply -f chaos/
+                '''
+            }
+        }
+    }
+}

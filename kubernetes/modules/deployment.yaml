@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: ha-dr-app
+
+spec:
+  replicas: 4
+
+  strategy:
+    type: RollingUpdate
+
+  selector:
+    matchLabels:
+      app: ha-dr-app
+
+  template:
+    metadata:
+      labels:
+        app: ha-dr-app
+
+    spec:
+      containers:
+        - name: app
+
+          image: your-ecr-repo/ha-dr-app:latest
+
+          ports:
+            - containerPort: 3000
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+
+            initialDelaySeconds: 15
+            periodSeconds: 20

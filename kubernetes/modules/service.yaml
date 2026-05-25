@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+
+metadata:
+  name: ha-dr-service
+
+spec:
+  type: ClusterIP
+
+  selector:
+    app: ha-dr-app
+
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
